@@ -1,0 +1,26 @@
+{
+    "name": "cry/cry-cms-thing",
+    "type": "library",
+    "license": "free",
+    "autoload": {
+        "psr-4": {
+            "CryCMS\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Дмитрий Cry",
+            "email": "cry.int@gmail.com"
+        }
+    ],
+    "repositories": {
+	"cry-cms-db": {
+	    "type": "git",
+	    "url": "git@github.com:CryInt/CryCMS-Db.git",
+	    "reference": "origin/main"
+	}
+    },
+    "require": {
+	"cry/cry-cms-db": "*"
+    }
+}

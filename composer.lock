@@ -1,0 +1,48 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "99acc020d076eb925d2965049a692dde",
+    "packages": [
+        {
+            "name": "cry/cry-cms-db",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:CryInt/CryCMS-Db.git",
+                "reference": "b9154015530438bd9665a64d5c8501c6547b9582"
+            },
+            "require": {
+                "ext-pdo": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "CryCMS\\": "src/"
+                }
+            },
+            "license": [
+                "free"
+            ],
+            "authors": [
+                {
+                    "name": "Дмитрий Cry",
+                    "email": "cry.int@gmail.com"
+                }
+            ],
+            "description": "class for mysql with pdo",
+            "time": "2021-08-13T07:10:15+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.1.0"
+}
