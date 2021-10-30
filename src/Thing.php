@@ -71,6 +71,11 @@ abstract class Thing
         return false;
     }
 
+    public function setAttribute(string $key, $value): void
+    {
+        $this->$key = $value;
+    }
+
     public function setAttributes(array $values, bool $withDefault = false): void
     {
         if (!empty($values) && count($values) > 0) {
@@ -84,14 +89,27 @@ abstract class Thing
         }
     }
 
-    public static function getFieldByKey($key): ?array
+    public function getAttribute($key)
     {
-        return static::$_fields[$key] ?? null;
+        if (array_key_exists($key, $this->_attributes) !== false) {
+            return $this->_attributes[$key];
+        }
+
+        if (array_key_exists($key, $this->_metadata) !== false) {
+            return $this->_metadata[$key];
+        }
+
+        return null;
     }
 
     public function getAttributes(): array
     {
         return array_merge($this->_attributes, $this->_metadata);
+    }
+
+    public static function getFieldByKey($key): ?array
+    {
+        return static::$_fields[$key] ?? null;
     }
 
     /**
@@ -190,6 +208,48 @@ abstract class Thing
         return $result;
     }
 
+    public function delete(): bool
+    {
+        try {
+            //$fields = self::getFields();
+            if (isset($fields['deleted'])) {
+                $deleted = $this->getAttribute('deleted');
+                if ($deleted === 0 || $deleted === '0') {
+                    $this->setAttribute('deleted', 1);
+                    return $this->save();
+                }
+
+                return true;
+            }
+        }
+        catch (Exception $e) {}
+
+        $pK = self::getPk();
+        if ($pK === null) {
+            return false;
+        }
+
+        if ($this->_action === 'update') {
+            [$pK,] = self::getPkAndValues($pK, $this->_attributes);
+
+            $class = self::class();
+            $item = $class->findByPk($pK);
+
+            if ($item !== null) {
+                Db::table(static::$table)->delete($pK);
+
+                if (method_exists($class, 'afterDelete')) {
+                    $class->afterDelete($item);
+                }
+            }
+
+            $result = $class->findByPk($pK);
+            return $result === null;
+        }
+
+        return false;
+    }
+
     public static function getPkAndValues($pK, $values): array
     {
         if (!empty($pK) && is_array($pK) && count($pK) > 0) {
@@ -230,20 +290,20 @@ abstract class Thing
         return $class;
     }
 
-    public function itemExtension(): void
+    protected function itemExtension(): void
     {
     }
 
-    public function beforeSave($values)
+    protected function beforeSave($values)
     {
         return $values;
     }
 
-    public function afterSave($item): void
+    protected function afterSave($item): void
     {
     }
 
-    public function afterDelete($item): void
+    protected function afterDelete($item): void
     {
     }
 
