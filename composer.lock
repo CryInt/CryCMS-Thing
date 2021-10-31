@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fb0b7f68f3a5762e936c08ab51f93f7d",
+    "content-hash": "1df961a1687f88576ce24b309b53dbaa",
     "packages": [
         {
             "name": "cry/cry-cms-db",
-            "version": "1.02",
+            "version": "1.03",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CryInt/CryCMS-Db.git",
-                "reference": "d7b6cbef4f8fb85f6ff1440610420b5e8fa9acbd"
+                "reference": "107fb667cc400ff72672950f0d5466d3cb7f4228"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CryInt/CryCMS-Db/zipball/d7b6cbef4f8fb85f6ff1440610420b5e8fa9acbd",
-                "reference": "d7b6cbef4f8fb85f6ff1440610420b5e8fa9acbd",
+                "url": "https://api.github.com/repos/CryInt/CryCMS-Db/zipball/107fb667cc400ff72672950f0d5466d3cb7f4228",
+                "reference": "107fb667cc400ff72672950f0d5466d3cb7f4228",
                 "shasum": ""
             },
             "require": {
@@ -41,10 +41,10 @@
             ],
             "description": "class for mysql with pdo",
             "support": {
-                "source": "https://github.com/CryInt/CryCMS-Db/tree/1.02",
+                "source": "https://github.com/CryInt/CryCMS-Db/tree/1.03",
                 "issues": "https://github.com/CryInt/CryCMS-Db/issues"
             },
-            "time": "2021-09-28T06:07:30+00:00"
+            "time": "2021-10-24T14:48:54+00:00"
         }
     ],
     "packages-dev": [],

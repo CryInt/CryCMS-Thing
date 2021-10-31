@@ -21,6 +21,6 @@
         }
 	],
     "require": {
-	    "cry/cry-cms-db": "v1.02"
+	    "cry/cry-cms-db": "*"
     }
 }

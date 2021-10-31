@@ -23,10 +23,14 @@ class Pages extends Thing
     {
         return [
             'image' => [
-                'source' => 'Image', // Класс откуда будут получены данные
-                'method' => 'findByPk', // Метод получения данных класса source
-                'params' => ['image_id'], // Параметры, которые будут переданы в метод
-                'prompt' => true, // Будут ли получены данные сразу (true) или только поле запроса (false)
+                // Класс откуда будут получены данные
+                'source' => 'Image', 
+                // Метод получения данных класса source
+                'method' => 'findByPk', 
+                // Параметры, которые будут переданы в метод
+                'params' => ['image_id'], 
+                // Будут ли получены данные сразу (true) или только поле запроса (false)
+                'prompt' => true, 
             ]
         ];
     }
@@ -89,6 +93,14 @@ $page = Pages::findByAttributes([
 
 `Получение обьектов из SQL выборки` - [CryCMS-Db](https://github.com/CryInt/CryCMS-Db)
 ```php
+$pages = Pages::Db()->where(["deleted = '0'"])->getAll();
+$pages = Pages::itemsObjects($pages);
+
+$page = Pages::Db()->where(["deleted = '0'"])->getOne();
+$page = Pages::itemObject($page);
+
+OR
+
 $pagesList = Db::table(Pages::getTable())->where(["deleted = '0'"])->getAll();
 $pages = Pages::itemsObjects($pagesList);
 

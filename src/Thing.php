@@ -264,6 +264,11 @@ abstract class Thing
         return self::itemsObjects($items);
     }
 
+    public static function Db(): Db
+    {
+        return Db::table(self::getTable());
+    }
+
     public function save()
     {
         $pK = self::getPk();
@@ -383,10 +388,13 @@ abstract class Thing
         return $items;
     }
 
-    public static function itemObject($item, string $action = 'update'): Thing
+    public static function itemObject($item, string $action = 'update'): ?Thing
     {
-        $class = self::class($action);
+        if (!is_array($item)) {
+            return null;
+        }
 
+        $class = self::class($action);
         $class->setAttributes($item, true);
         $class->itemExtension();
 
