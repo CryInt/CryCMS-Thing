@@ -386,7 +386,7 @@ abstract class Thing
     public static function itemObject($item, string $action = 'update'): Thing
     {
         $class = self::class($action);
-        
+
         $class->setAttributes($item, true);
         $class->itemExtension();
 
