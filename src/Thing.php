@@ -28,8 +28,7 @@ abstract class Thing
             }
         }
         catch (Exception $e) {
-            print_r($e->getMessage());
-            exit;
+            die($e->getMessage());
         }
 
         $this->_metadata[$field] = $value;
@@ -72,11 +71,19 @@ abstract class Thing
         return false;
     }
 
+    /**
+     * @noinspection UnknownInspectionInspection
+     * @noinspection PhpUnused
+     */
     public function setAttribute(string $key, $value): void
     {
         $this->$key = $value;
     }
 
+    /**
+     * @noinspection UnknownInspectionInspection
+     * @noinspection PhpUnused
+     */
     public function setAttributes(array $values, bool $withDefault = false): void
     {
         if (!empty($values) && count($values) > 0) {
@@ -90,25 +97,28 @@ abstract class Thing
         }
     }
 
+    /**
+     * @noinspection UnknownInspectionInspection
+     * @noinspection PhpUnused
+     */
     public function getAttribute($key)
     {
         return $this->__get($key);
     }
 
+    /**
+     * @noinspection UnknownInspectionInspection
+     * @noinspection PhpUnused
+     */
     public function getAttributes(): array
     {
         return array_merge($this->_attributes, $this->_metadata);
     }
 
-    protected static function getFieldByKey($key): ?array
-    {
-        return static::$_fields[$key] ?? null;
-    }
-
     /**
      * @throws Exception
      */
-    public static function issetField($field): bool
+    protected static function issetField($field): bool
     {
         $fields = self::getFields();
         return array_key_exists($field, $fields);
@@ -119,7 +129,7 @@ abstract class Thing
         return [];
     }
 
-    private function getRelation($relation)
+    protected function getRelation($relation)
     {
         if (class_exists($relation['source']) === false) {
             return null;
@@ -127,14 +137,13 @@ abstract class Thing
 
         if (is_callable(array($relation['source'], $relation['method']))) {
             $params = $this->extractParams($relation['params']);
-            $obj = new $relation['source']();
-            return call_user_func_array([$obj, $relation['method']], $params);
+            return call_user_func_array([$relation['source'], $relation['method']], $params);
         }
 
         return null;
     }
 
-    public function extractParams($params): array
+    protected function extractParams($params): array
     {
         $result = [];
 
@@ -149,7 +158,11 @@ abstract class Thing
         return $result;
     }
 
-    public function findByPk($pKId): ?Thing
+    /**
+     * @noinspection UnknownInspectionInspection
+     * @noinspection PhpUnused
+     */
+    public static function findByPk($pKId): ?Thing
     {
         $pK = self::getPk();
         if ($pK === null) {
@@ -197,7 +210,11 @@ abstract class Thing
         return $item;
     }
 
-    public function findByAttributes(array $attributes = []): ?Thing
+    /**
+     * @noinspection UnknownInspectionInspection
+     * @noinspection PhpUnused
+     */
+    public static function findByAttributes(array $attributes = []): ?Thing
     {
         $where = $values = [];
 
@@ -215,7 +232,11 @@ abstract class Thing
         return self::itemObject($item);
     }
 
-    public function findAllByAttributes(array $attributes = [], int $offset = null, int $limit = null): ?array
+    /**
+     * @noinspection UnknownInspectionInspection
+     * @noinspection PhpUnused
+     */
+    public static function findAllByAttributes(array $attributes = [], int $offset = null, int $limit = null): ?array
     {
         $where = $values = [];
 
@@ -275,7 +296,7 @@ abstract class Thing
         }
 
         if (method_exists($class, 'afterSave')) {
-            $item = $class->findByPk($pK);
+            $item = $class::findByPk($pK);
             if ($item !== null) {
                 $item->setAttributes($this->_metadata);
                 $class->afterSave($item);
@@ -285,6 +306,10 @@ abstract class Thing
         return $result;
     }
 
+    /**
+     * @noinspection UnknownInspectionInspection
+     * @noinspection PhpUnused
+     */
     public function delete(): bool
     {
         try {
@@ -310,7 +335,7 @@ abstract class Thing
             [$pK,] = self::getPkAndValues($pK, $this->_attributes);
 
             $class = self::class();
-            $item = $class->findByPk($pK);
+            $item = $class::findByPk($pK);
 
             if ($item !== null) {
                 Db::table(self::getTable())->delete($pK);
@@ -320,14 +345,14 @@ abstract class Thing
                 }
             }
 
-            $result = $class->findByPk($pK);
+            $result = $class::findByPk($pK);
             return $result === null;
         }
 
         return false;
     }
 
-    public static function getPkAndValues($pK, $values): array
+    protected static function getPkAndValues($pK, $values): array
     {
         if (!empty($pK) && is_array($pK) && count($pK) > 0) {
             foreach ($pK as $key => $null) {
@@ -361,8 +386,18 @@ abstract class Thing
     public static function itemObject($item, string $action = 'update'): Thing
     {
         $class = self::class($action);
+        
         $class->setAttributes($item, true);
         $class->itemExtension();
+
+        $relations = $class->relations();
+        if (!empty($relations)) {
+            foreach ($relations as $field => $relation) {
+                if (!empty($relation['prompt']) && $relation['prompt'] === true) {
+                    $class->_metadata[$field] = $class->getRelation($relation);
+                }
+            }
+        }
 
         return $class;
     }
@@ -392,8 +427,7 @@ abstract class Thing
             $fields = self::getFields();
         }
         catch (Exception $e) {
-            print_r($e->getMessage());
-            return null;
+            die($e->getMessage());
         }
 
         if (!empty($fields) && count($fields) > 0) {
@@ -440,7 +474,7 @@ abstract class Thing
         throw new Exception("No table `" . self::getTable() . "` in database", 1);
     }
 
-    private function removeUnchangedValues($values)
+    protected function removeUnchangedValues($values)
     {
         if (!empty($this->_attributes_default) && count($this->_attributes_default) > 0) {
             foreach ($this->_attributes_default as $defaultKey => $defaultValue) {
