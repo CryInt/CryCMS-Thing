@@ -2,6 +2,7 @@
 namespace CryCMS;
 
 use Exception;
+use RuntimeException;
 
 abstract class Thing
 {
@@ -13,6 +14,8 @@ abstract class Thing
     protected $_metadata = [];
 
     protected $_action = 'insert';
+
+    public $_errors;
 
     public function __construct(string $action = 'insert')
     {
@@ -72,7 +75,6 @@ abstract class Thing
     }
 
     /**
-     * @noinspection UnknownInspectionInspection
      * @noinspection PhpUnused
      */
     public function setAttribute(string $key, $value): void
@@ -81,7 +83,6 @@ abstract class Thing
     }
 
     /**
-     * @noinspection UnknownInspectionInspection
      * @noinspection PhpUnused
      */
     public function setAttributes(array $values, bool $withDefault = false): void
@@ -98,7 +99,6 @@ abstract class Thing
     }
 
     /**
-     * @noinspection UnknownInspectionInspection
      * @noinspection PhpUnused
      */
     public function getAttribute($key)
@@ -107,12 +107,19 @@ abstract class Thing
     }
 
     /**
-     * @noinspection UnknownInspectionInspection
      * @noinspection PhpUnused
      */
     public function getAttributes(): array
     {
         return array_merge($this->_attributes, $this->_metadata);
+    }
+
+    /**
+     * @noinspection PhpUnused
+     */
+    public function validate(): bool
+    {
+        return true;
     }
 
     /**
@@ -159,7 +166,6 @@ abstract class Thing
     }
 
     /**
-     * @noinspection UnknownInspectionInspection
      * @noinspection PhpUnused
      */
     public static function findByPk($pKId): ?Thing
@@ -211,7 +217,6 @@ abstract class Thing
     }
 
     /**
-     * @noinspection UnknownInspectionInspection
      * @noinspection PhpUnused
      */
     public static function findByAttributes(array $attributes = []): ?Thing
@@ -233,7 +238,6 @@ abstract class Thing
     }
 
     /**
-     * @noinspection UnknownInspectionInspection
      * @noinspection PhpUnused
      */
     public static function findAllByAttributes(array $attributes = [], int $offset = null, int $limit = null): ?array
@@ -310,7 +314,6 @@ abstract class Thing
     }
 
     /**
-     * @noinspection UnknownInspectionInspection
      * @noinspection PhpUnused
      */
     public function delete(): bool
@@ -457,9 +460,6 @@ abstract class Thing
         return null;
     }
 
-    /**
-     * @throws Exception
-     */
     protected static function getFields(): array
     {
         if (static::$_fields !== null) {
@@ -467,7 +467,7 @@ abstract class Thing
         }
 
         if (empty(self::getTable())) {
-            throw new Exception('No table specified in class: ' . static::class, 1);
+            throw new RuntimeException('No table specified in class: ' . static::class, 1);
         }
 
         $checkTableExists = Db::sql()->query("SHOW TABLES LIKE :table", ['table' => self::getTable()])->getOne();
@@ -477,7 +477,7 @@ abstract class Thing
             );
         }
 
-        throw new Exception("No table `" . self::getTable() . "` in database", 1);
+        throw new RuntimeException("No table `" . self::getTable() . "` in database", 1);
     }
 
     protected function removeUnchangedValues($values)
