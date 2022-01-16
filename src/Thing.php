@@ -278,10 +278,8 @@ abstract class Thing
 
         [$pK, $values] = self::getPkAndValues($pK, $this->_attributes);
 
-        $class = self::class();
-
-        if (method_exists($class, 'beforeSave')) {
-            $values = $class->beforeSave($values);
+        if (method_exists($this, 'beforeSave')) {
+            $values = $this->beforeSave($values);
         }
 
         $result = null;
@@ -300,11 +298,11 @@ abstract class Thing
             $result = $pK = Db::lastInsertId();
         }
 
-        if (method_exists($class, 'afterSave')) {
-            $item = $class::findByPk($pK);
+        if (method_exists($this, 'afterSave')) {
+            $item = $this::findByPk($pK);
             if ($item !== null) {
                 $item->setAttributes($this->_metadata);
-                $class->afterSave($item);
+                $this->afterSave($item);
             }
         }
 
