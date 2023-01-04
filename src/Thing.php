@@ -168,7 +168,7 @@ abstract class Thing
     /**
      * @noinspection PhpUnused
      */
-    public static function findByPk($pKId): ?static
+    public static function findByPk($pKId)
     {
         $pK = static::getPk();
         if ($pK === null) {
@@ -219,7 +219,7 @@ abstract class Thing
     /**
      * @noinspection PhpUnused
      */
-    public static function findByAttributes(array $attributes = []): ?static
+    public static function findByAttributes(array $attributes = [])
     {
         $where = $values = [];
 
@@ -389,7 +389,7 @@ abstract class Thing
         return $items;
     }
 
-    public static function itemObject($item, string $action = 'update'): ?static
+    public static function itemObject($item, string $action = 'update')
     {
         if (!is_array($item)) {
             return null;
