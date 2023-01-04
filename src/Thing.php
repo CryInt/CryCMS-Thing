@@ -25,7 +25,7 @@ abstract class Thing
     public function __set($field, $value): bool
     {
         try {
-            if (self::issetField($field)) {
+            if (static::issetField($field)) {
                 $this->_attributes[$field] = $value;
                 return true;
             }
@@ -127,7 +127,7 @@ abstract class Thing
      */
     protected static function issetField($field): bool
     {
-        $fields = self::getFields();
+        $fields = static::getFields();
         return array_key_exists($field, $fields);
     }
 
@@ -168,9 +168,9 @@ abstract class Thing
     /**
      * @noinspection PhpUnused
      */
-    public static function findByPk($pKId): ?Thing
+    public static function findByPk($pKId): ?static
     {
-        $pK = self::getPk();
+        $pK = static::getPk();
         if ($pK === null) {
             return null;
         }
@@ -205,12 +205,12 @@ abstract class Thing
             return null;
         }
 
-        $item = Db::table(self::getTable())->where($where)->values($values)->getOne();
+        $item = Db::table(static::getTable())->where($where)->values($values)->getOne();
         if (empty($item)) {
             return null;
         }
 
-        $item = self::itemObject($item);
+        $item = static::itemObject($item);
         $item->_action = 'update';
 
         return $item;
@@ -219,7 +219,7 @@ abstract class Thing
     /**
      * @noinspection PhpUnused
      */
-    public static function findByAttributes(array $attributes = []): ?Thing
+    public static function findByAttributes(array $attributes = []): ?static
     {
         $where = $values = [];
 
@@ -228,13 +228,13 @@ abstract class Thing
             $values[$attributeKey] = $attributeValue;
         }
 
-        $item = Db::table(self::getTable())->where($where)->values($values)->getOne();
+        $item = Db::table(static::getTable())->where($where)->values($values)->getOne();
 
         if (empty($item)) {
             return null;
         }
 
-        return self::itemObject($item);
+        return static::itemObject($item);
     }
 
     /**
@@ -249,7 +249,7 @@ abstract class Thing
             $values[$attributeKey] = $attributeValue;
         }
 
-        $itemsDb = Db::table(self::getTable())->where($where)->values($values);
+        $itemsDb = Db::table(static::getTable())->where($where)->values($values);
 
         if ($limit !== null) {
             $itemsDb->limit($limit);
@@ -265,22 +265,22 @@ abstract class Thing
             return null;
         }
 
-        return self::itemsObjects($items);
+        return static::itemsObjects($items);
     }
 
     public static function Db(): Db
     {
-        return Db::table(self::getTable());
+        return Db::table(static::getTable());
     }
 
     public function save()
     {
-        $pK = self::getPk();
+        $pK = static::getPk();
         if ($pK === null) {
             return false;
         }
 
-        [$pK, $values] = self::getPkAndValues($pK, $this->_attributes);
+        [$pK, $values] = static::getPkAndValues($pK, $this->_attributes);
 
         if (method_exists($this, 'beforeSave')) {
             $values = $this->beforeSave($values);
@@ -291,14 +291,14 @@ abstract class Thing
         if ($this->_action === 'update') {
             $values = $this->removeUnchangedValues($values);
             if (count($values) > 0) {
-                Db::table(self::getTable())->update($values, $pK);
+                Db::table(static::getTable())->update($values, $pK);
             }
 
             $result = true;
         }
 
         if ($this->_action === 'insert') {
-            Db::table(self::getTable())->insert($values);
+            Db::table(static::getTable())->insert($values);
             $result = $pK = Db::lastInsertId();
         }
 
@@ -319,7 +319,7 @@ abstract class Thing
     public function delete(): bool
     {
         try {
-            $fields = self::getFields();
+            $fields = static::getFields();
             if (isset($fields['deleted'])) {
                 $deleted = $this->getAttribute('deleted');
                 if ($deleted === 0 || $deleted === '0') {
@@ -332,19 +332,19 @@ abstract class Thing
         }
         catch (Exception $e) {}
 
-        $pK = self::getPk();
+        $pK = static::getPk();
         if ($pK === null) {
             return false;
         }
 
         if ($this->_action === 'update') {
-            [$pK,] = self::getPkAndValues($pK, $this->_attributes);
+            [$pK,] = static::getPkAndValues($pK, $this->_attributes);
 
-            $class = self::class();
+            $class = static::class();
             $item = $class::findByPk($pK);
 
             if ($item !== null) {
-                Db::table(self::getTable())->delete($pK);
+                Db::table(static::getTable())->delete($pK);
 
                 if (method_exists($class, 'afterDelete')) {
                     $class->afterDelete($item);
@@ -382,20 +382,20 @@ abstract class Thing
     {
         if (!empty($items) && count($items) > 0) {
             foreach ($items as $key => $item) {
-                $items[$key] = self::itemObject($item, $action);
+                $items[$key] = static::itemObject($item, $action);
             }
         }
 
         return $items;
     }
 
-    public static function itemObject($item, string $action = 'update'): ?Thing
+    public static function itemObject($item, string $action = 'update'): ?static
     {
         if (!is_array($item)) {
             return null;
         }
 
-        $class = self::class($action);
+        $class = static::class($action);
         $class->setAttributes($item, true);
         $class->itemExtension();
 
@@ -433,7 +433,7 @@ abstract class Thing
         $pK = [];
 
         try {
-            $fields = self::getFields();
+            $fields = static::getFields();
         }
         catch (Exception $e) {
             die($e->getMessage());
@@ -466,18 +466,18 @@ abstract class Thing
             return static::$_fields;
         }
 
-        if (empty(self::getTable())) {
+        if (empty(static::getTable())) {
             throw new RuntimeException('No table specified in class: ' . static::class, 1);
         }
 
-        $checkTableExists = Db::sql()->query("SHOW TABLES LIKE :table", ['table' => self::getTable()])->getOne();
+        $checkTableExists = Db::sql()->query("SHOW TABLES LIKE :table", ['table' => static::getTable()])->getOne();
         if (!empty($checkTableExists) && is_array($checkTableExists) && count($checkTableExists) === 1) {
-            return static::$_fields = self::getFieldsByRaw(
-                Db::table(self::getTable())->fields()
+            return static::$_fields = static::getFieldsByRaw(
+                Db::table(static::getTable())->fields()
             );
         }
 
-        throw new RuntimeException("No table `" . self::getTable() . "` in database", 1);
+        throw new RuntimeException("No table `" . static::getTable() . "` in database", 1);
     }
 
     protected function removeUnchangedValues($values)
@@ -498,7 +498,7 @@ abstract class Thing
         $result = [];
 
         foreach ($fields as $field) {
-            $result[$field['COLUMN_NAME']] = self::unsetReturn($field, 'COLUMN_NAME');
+            $result[$field['COLUMN_NAME']] = static::unsetReturn($field, 'COLUMN_NAME');
         }
 
         return $result;
@@ -513,7 +513,7 @@ abstract class Thing
         return $array;
     }
 
-    public static function class(string $action = 'insert'): Thing
+    public static function class(string $action = 'insert')
     {
         $className = static::class;
         return new $className($action);
