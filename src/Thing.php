@@ -223,16 +223,11 @@ abstract class Thing implements ThingInterface
             $this->_action
         );
 
-        $result = null;
-
         if ($this->_action === 'update') {
             $values = $this->removeUnchangedValues($values);
             if (count($values) > 0) {
                 self::Db()->update($values, $primaryKeyCondition);
-                return true;
             }
-
-            return false;
         }
 
         if ($this->_action === 'insert') {
@@ -242,16 +237,16 @@ abstract class Thing implements ThingInterface
             if (!empty($insertId)) {
                 $primaryKeyCondition = $insertId;
             }
+        }
 
-            $result = $this::find()->byPk($primaryKeyCondition);
-            if ($result !== null) {
-                $this->_action = 'update';
-                $this->setAttributes($result->getAttributes(false), true);
-            }
+        $result = $this::find()->byPk($primaryKeyCondition);
+        if ($result !== null) {
+            $this->_action = 'update';
+            $this->setAttributes($result->getAttributes(false), true);
         }
 
         if ($result !== null && method_exists($this, 'afterSave')) {
-            $result->afterSave();
+            $this->afterSave();
         }
 
         return $result !== null;
