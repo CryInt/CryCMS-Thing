@@ -86,7 +86,7 @@ abstract class Thing implements ThingInterface
             return null;
         }
 
-        $itemAsObject = $this->itemObject($item);
+        $itemAsObject = self::itemObject($item);
         if ($cached) {
             ThingCache::set($cacheKey, $itemAsObject);
         }
@@ -115,7 +115,7 @@ abstract class Thing implements ThingInterface
             return null;
         }
 
-        $itemAsObject = $this->itemObject($item);
+        $itemAsObject = self::itemObject($item);
         if ($cached) {
             ThingCache::set($cacheKey, $itemAsObject);
         }
@@ -134,11 +134,12 @@ abstract class Thing implements ThingInterface
             return null;
         }
 
-        return $this->itemObject($item);
+        return self::itemObject($item);
     }
 
     public function listByAttributes(
         array $attributes = [],
+        array $order = [],
         int $offset = null,
         int $limit = null
     ): array
@@ -150,25 +151,13 @@ abstract class Thing implements ThingInterface
             ->where($where)
             ->values($values);
 
-        if ($limit !== null) {
-            $itemsDb->limit($limit);
-        }
-
-        if ($offset !== null) {
-            $itemsDb->offset($offset);
-        }
-
-        $items = $itemsDb->getAll();
-
-        return [
-            'list' => self::itemsObjects($items),
-            'count' => self::Db()::getFoundRows(),
-        ];
+        return $this->listBySomething($itemsDb, $order, $offset, $limit);
     }
 
     public function listByQuery(
         string $where,
         array $values = [],
+        array $order = [],
         int $offset = null,
         int $limit = null
     ): array
@@ -177,6 +166,20 @@ abstract class Thing implements ThingInterface
             ->calcRows()
             ->where([$where])
             ->values($values);
+
+        return $this->listBySomething($itemsDb, $order, $offset, $limit);
+    }
+
+    protected function listBySomething(
+        Db $itemsDb,
+        array $order = [],
+        int $offset = null,
+        int $limit = null
+    ): array
+    {
+        if (!empty($order)) {
+            $itemsDb->orderBy($order);
+        }
 
         if ($limit !== null) {
             $itemsDb->limit($limit);

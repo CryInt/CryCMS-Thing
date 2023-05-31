@@ -16,6 +16,7 @@ interface ThingInterface
 
     public function listByAttributes(
         array $attributes = [],
+        array $order = [],
         int $offset = null,
         int $limit = null
     ): array;
@@ -23,6 +24,7 @@ interface ThingInterface
     public function listByQuery(
         string $where,
         array $values = [],
+        array $order = [],
         int $offset = null,
         int $limit = null
     ): array;
