@@ -427,6 +427,11 @@ abstract class Thing implements ThingInterface
         return false;
     }
 
+    public function getError(string $field): ?string
+    {
+        return $this->_errors[$field] ?? null;
+    }
+    
     public function getErrors(): array
     {
         return $this->_errors;
