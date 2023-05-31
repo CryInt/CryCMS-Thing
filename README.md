@@ -2,7 +2,7 @@
 
 ```php
 <?php
-use CryCMS\Thing;
+use CryCMS\Helpers\Thing;
 
 /**
  * @property string $title
@@ -16,35 +16,25 @@ use CryCMS\Thing;
 
 class Pages extends Thing
 {
-    protected static $table = 'pages';
-    protected static $_fields;
-
-    protected function relations(): array
-    {
-        return [
-            'image' => [
-                // Класс откуда будут получены данные
-                'source' => 'Image', 
-                // Метод получения данных класса source
-                'method' => 'findByPk', 
-                // Параметры, которые будут переданы в метод
-                'params' => ['image_id'], 
-                // Будут ли получены данные сразу (true) или только поле запроса (false)
-                'prompt' => true, 
-            ]
-        ];
-    }
+    public const TABLE = 'pages';
+    public const SOFT_DELETE = true;
 }
 ```
 
 ```php
 <?php
-use CryCMS\Thing;
+use CryCMS\Helpers\Thing;
 
 class Image extends Thing
 {
-    protected static $table = 'images';
-    protected static $_fields;
+    public const TABLE = 'images';
+    
+    protected function validate(): void
+    {
+        if (empty($this->title)) {
+            $this->addError('title', 'Заголовок не может быть пустым');
+        }
+    }
 }
 ```
 
@@ -62,7 +52,7 @@ $result = $page->save();
 
 `Изменение записи`
 ```php
-$page = Pages::findByPk(1);
+$page = Pages::find()->byPk(1);
 if ($page !== null) {
     $page->image_id = 1;
     $page->setAttributes([
@@ -74,7 +64,7 @@ if ($page !== null) {
 
 `Удаление записи`
 ```php
-$page = Pages::findByPk(1);
+$page = Pages::find()->byPk(1);
 if ($page !== null) {
     $page->delete();
 }
@@ -82,11 +72,11 @@ if ($page !== null) {
 
 `Поиск по атрибутам`
 ```php
-$pages = Pages::findAllByAttributes([
+$pages = Pages::find()->listByAttributes([
     'deleted' => 0,
 ], 0, 10);
 
-$page = Pages::findByAttributes([
+$page = Pages::find()->oneByAttributes([
     'deleted' => 0,
 ]);
 ```
@@ -101,28 +91,9 @@ $page = Pages::itemObject($page);
 
 OR
 
-$pagesList = Db::table(Pages::getTable())->where(["deleted = '0'"])->getAll();
+$pagesList = Db::table(Pages::TABLE)->where(["deleted = '0'"])->getAll();
 $pages = Pages::itemsObjects($pagesList);
 
-$pageOne = Db::table(Pages::getTable())->where(["deleted = '0'"])->getOne();
+$pageOne = Db::table(Pages::TABLE)->where(["deleted = '0'"])->getOne();
 $page = Pages::itemObject($pageOne);
-```
-
-`Relations - полуавтоматическое или автоматическое получение данных из других моделей`
-```php
-$page = Pages::findByPk(1);
-print_r($image = $page->image);
-
-Image Object
-(
-    [_attributes:protected] => Array
-        (
-            [image_id] => 1
-            [url] => https://x03.ru/1.jpg
-        )
-)
-
-Хотя поле и данных нет, но при указании Relation['image']
-Данные были получены из Image::findByPk(image_id);
-image_id автоматически подставляется из текущего обьекта
 ```

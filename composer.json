@@ -21,6 +21,8 @@
         }
 	],
     "require": {
-	    "cry/cry-cms-db": "*"
+	    "cry/cry-cms-db": "*",
+        "ext-pdo": "*",
+        "ext-json": "*"
     }
 }
