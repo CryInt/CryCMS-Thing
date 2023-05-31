@@ -431,13 +431,13 @@ abstract class Thing implements ThingInterface
     {
         return $this->_errors[$field] ?? null;
     }
-    
+
     public function getErrors(): array
     {
         return $this->_errors;
     }
 
-    protected function addError(string $field, string $error): void
+    public function addError(string $field, string $error): void
     {
         $this->_errors[$field] = $error;
     }
