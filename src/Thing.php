@@ -393,15 +393,14 @@ abstract class Thing implements ThingInterface
         return Db::table(self::getTable());
     }
 
-    public function __set($field, $value): bool
+    public function __set($field, $value): void
     {
         if (static::issetField($field)) {
             $this->_attributes[$field] = $value;
-            return true;
+            return;
         }
 
         $this->_metadata[$field] = $value;
-        return true;
     }
 
     public function __get($field)
