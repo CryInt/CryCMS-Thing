@@ -467,7 +467,7 @@ abstract class Thing implements ThingInterface
         return null;
     }
 
-    protected static function issetField($field): bool
+    public static function issetField($field): bool
     {
         $fields = self::getFields();
         return array_key_exists($field, $fields);
