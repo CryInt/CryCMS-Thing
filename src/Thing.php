@@ -190,10 +190,11 @@ abstract class Thing implements ThingInterface
         }
 
         $items = $itemsDb->getAll();
+        $count = self::Db()::getFoundRows();
 
         return [
             'list' => self::itemsObjects($items),
-            'count' => self::Db()::getFoundRows(),
+            'count' => $count,
         ];
     }
 
