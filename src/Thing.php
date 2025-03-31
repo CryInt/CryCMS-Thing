@@ -140,8 +140,8 @@ abstract class Thing implements ThingInterface
     public function listByAttributes(
         array $attributes = [],
         array $order = [],
-        int $offset = null,
-        int $limit = null
+        ?int  $offset = null,
+        ?int $limit = null
     ): array
     {
         [$where, $values] = ThingHelper::buildQuery($attributes);
@@ -156,10 +156,10 @@ abstract class Thing implements ThingInterface
 
     public function listByQuery(
         string $where,
-        array $values = [],
-        array $order = [],
-        int $offset = null,
-        int $limit = null
+        array  $values = [],
+        array  $order = [],
+        ?int   $offset = null,
+        ?int $limit = null
     ): array
     {
         $itemsDb = self::Db()
@@ -171,10 +171,10 @@ abstract class Thing implements ThingInterface
     }
 
     protected function listBySomething(
-        Db $itemsDb,
+        Db    $itemsDb,
         array $order = [],
-        int $offset = null,
-        int $limit = null
+        ?int  $offset = null,
+        ?int $limit = null
     ): array
     {
         if (!empty($order)) {

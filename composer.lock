@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1df961a1687f88576ce24b309b53dbaa",
+    "content-hash": "7f6f01e6f2f34110355f1905ef1fc4e0",
     "packages": [
         {
             "name": "cry/cry-cms-db",
-            "version": "1.08",
+            "version": "1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CryInt/CryCMS-Db.git",
-                "reference": "427a684fa0fb5fd0d6734a95492895dddd2befb9"
+                "reference": "78db9922d177d616364ebdd4af347a367b9fb93e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CryInt/CryCMS-Db/zipball/427a684fa0fb5fd0d6734a95492895dddd2befb9",
-                "reference": "427a684fa0fb5fd0d6734a95492895dddd2befb9",
+                "url": "https://api.github.com/repos/CryInt/CryCMS-Db/zipball/78db9922d177d616364ebdd4af347a367b9fb93e",
+                "reference": "78db9922d177d616364ebdd4af347a367b9fb93e",
                 "shasum": ""
             },
             "require": {
@@ -30,21 +30,22 @@
                     "CryCMS\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "free"
+                "MIT"
             ],
             "authors": [
                 {
-                    "name": "Дмитрий Cry",
+                    "name": "Cry.Int",
                     "email": "cry.int@gmail.com"
                 }
             ],
             "description": "class for mysql with pdo",
             "support": {
-                "source": "https://github.com/CryInt/CryCMS-Db/tree/1.08",
-                "issues": "https://github.com/CryInt/CryCMS-Db/issues"
+                "issues": "https://github.com/CryInt/CryCMS-Db/issues",
+                "source": "https://github.com/CryInt/CryCMS-Db/tree/1.10"
             },
-            "time": "2023-05-30T20:32:18+00:00"
+            "time": "2025-03-31T18:35:36+00:00"
         }
     ],
     "packages-dev": [],
@@ -53,7 +54,10 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-pdo": "*",
+        "ext-json": "*"
+    },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.3.0"
 }
