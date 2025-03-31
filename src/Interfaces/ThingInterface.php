@@ -17,16 +17,16 @@ interface ThingInterface
     public function listByAttributes(
         array $attributes = [],
         array $order = [],
-        int $offset = null,
-        int $limit = null
+        ?int  $offset = null,
+        ?int $limit = null
     ): array;
 
     public function listByQuery(
         string $where,
-        array $values = [],
-        array $order = [],
-        int $offset = null,
-        int $limit = null
+        array  $values = [],
+        array  $order = [],
+        ?int   $offset = null,
+        ?int $limit = null
     ): array;
 
     public function save(): bool;

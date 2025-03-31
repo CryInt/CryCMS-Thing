@@ -2,7 +2,7 @@
     "name": "cry/cry-cms-thing",
     "description": "All MySQL record is Object",
     "type": "library",
-    "version": "2.08",
+    "version": "2.09",
     "license": "MIT",
     "autoload": {
         "psr-4": {
