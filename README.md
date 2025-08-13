@@ -32,13 +32,13 @@ class Image extends Thing
     protected function validate(): void
     {
         if (empty($this->title)) {
-            $this->addError('title', 'Заголовок не может быть пустым');
+            $this->addError('title', 'Title cannot be empty');
         }
     }
 }
 ```
 
-`Создание новой записи`
+`Create New`
 ```php
 $page = new Pages();
 $page->title = 'TEST';
@@ -50,7 +50,7 @@ $page->setAttributes([
 $result = $page->save();
 ```
 
-`Изменение записи`
+`Update`
 ```php
 $page = Pages::find()->byPk(1);
 if ($page !== null) {
@@ -62,7 +62,7 @@ if ($page !== null) {
 }
 ```
 
-`Удаление записи`
+`Delete`
 ```php
 $page = Pages::find()->byPk(1);
 if ($page !== null) {
@@ -70,7 +70,7 @@ if ($page !== null) {
 }
 ```
 
-`Поиск по атрибутам`
+`Find element by attributes`
 ```php
 $pages = Pages::find()->listByAttributes([
     'deleted' => 0,
@@ -81,7 +81,7 @@ $page = Pages::find()->oneByAttributes([
 ]);
 ```
 
-`Получение обьектов из SQL выборки` - [CryCMS-Db](https://github.com/CryInt/CryCMS-Db)
+`Create object by SQL query` - [CryCMS-Db](https://github.com/CryInt/CryCMS-Db)
 ```php
 $pages = Pages::Db()->where(["deleted = '0'"])->getAll();
 $pages = Pages::itemsObjects($pages);

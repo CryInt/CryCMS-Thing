@@ -511,12 +511,21 @@ abstract class Thing implements ThingInterface
             foreach ($this->_attributes_default as $defaultKey => $defaultValue) {
                 if (array_key_exists($defaultKey, $values)) {
                     $checkValue = $values[$defaultKey];
+
                     if (
                         is_array($checkValue) === false &&
                         is_null($checkValue) === false &&
                         is_bool($checkValue) === false
                     ) {
                         $checkValue = (string)$checkValue;
+                    }
+
+                    if (
+                        is_array($defaultValue) === false &&
+                        is_null($defaultValue) === false &&
+                        is_bool($defaultValue) === false
+                    ) {
+                        $defaultValue = (string)$defaultValue;
                     }
 
                     if ($checkValue === $defaultValue) {
