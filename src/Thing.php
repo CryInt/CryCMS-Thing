@@ -325,7 +325,7 @@ abstract class Thing implements ThingInterface
     /**
      * @throws ThingValidateException
      */
-    protected function validate(): void
+    public function validate(): void
     {
         if ($this === null) {
             throw new ThingValidateException('Empty object');
