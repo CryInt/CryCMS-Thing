@@ -1,6 +1,8 @@
 <?php
 namespace CryCMS\Helpers;
 
+use CryCMS\Helpers;
+
 abstract class ThingHelper
 {
     public static function getFieldsByRaw(array $fields): array
@@ -41,39 +43,30 @@ abstract class ThingHelper
 
         if (count($params) > 0) {
             foreach ($params as $key => $value) {
-                if (is_null($value)) {
-                    $queryWhere[$key] = " `" . $key . "` IS NULL";
+                if (is_array($value)) {
+                    if (empty($value)) {
+                        continue;
+                    }
+
+                    if (self::valuesWithPlaceholders($value)) {
+                        foreach ($value as $n => $v) {
+                            $newKey = $key . '_' . $n;
+                            [$where, $value] = self::makeWhereValue($key, $v, $newKey);
+
+                            $queryWhere[$newKey] = $where;
+                            if ($value !== null) {
+                                $queryValues[$newKey] = $value;
+                            }
+                        }
+
+                        continue;
+                    }
                 }
-                elseif (is_array($value)) {
-                    $queryWhere[$key] = " `" . $key . "` IN (:" . $key . ")";
-                    $queryValues[$key] = $value;
-                }
-                elseif (strpos($value, '!') === 0) {
-                    $queryWhere[$key] = " `" . $key . "` != :" . $key;
-                    $queryValues[$key] = substr($value, 1);
-                }
-                elseif (strpos($value, '>=') === 0) {
-                    $queryWhere[$key] = " `" . $key . "` >= :" . $key;
-                    $queryValues[$key] = substr($value, 2);
-                }
-                elseif (strpos($value, '>') === 0) {
-                    $queryWhere[$key] = " `" . $key . "` > :" . $key;
-                    $queryValues[$key] = substr($value, 1);
-                }
-                elseif (strpos($value, '<=') === 0) {
-                    $queryWhere[$key] = " `" . $key . "` <= :" . $key;
-                    $queryValues[$key] = substr($value, 2);
-                }
-                elseif (strpos($value, '<') === 0) {
-                    $queryWhere[$key] = " `" . $key . "` < :" . $key;
-                    $queryValues[$key] = substr($value, 1);
-                }
-                elseif (strpos($value, '%') !== false) {
-                    $queryWhere[$key] = " `" . $key . "` LIKE :" . $key;
-                    $queryValues[$key] = $value;
-                }
-                else {
-                    $queryWhere[$key] = " `" . $key . "` = :" . $key;
+
+                [$where, $value] = self::makeWhereValue($key, $value);
+
+                $queryWhere[$key] = $where;
+                if ($value !== null) {
                     $queryValues[$key] = $value;
                 }
             }
@@ -106,5 +99,65 @@ abstract class ThingHelper
         }
 
         return [$primaryKey, $values];
+    }
+
+    protected static function makeWhereValue(string $key, mixed $value, ?string $valueKey = null): array
+    {
+        $returnWhere = null;
+        $returnValue = null;
+
+        if ($valueKey === null) {
+            $valueKey = $key;
+        }
+
+        if (is_null($value)) {
+            $returnWhere = " `" . $key . "` IS NULL";
+        }
+        elseif (is_array($value)) {
+            $returnWhere = " `" . $key . "` IN (:" . $valueKey . ")";
+            $returnValue = $value;
+        }
+        elseif (strpos($value, '!') === 0) {
+            $returnWhere = " `" . $key . "` != :" . $valueKey;
+            $returnValue = substr($value, 1);
+        }
+        elseif (strpos($value, '>=') === 0) {
+            $returnWhere = " `" . $key . "` >= :" . $valueKey;
+            $returnValue = substr($value, 2);
+        }
+        elseif (strpos($value, '>') === 0) {
+            $returnWhere = " `" . $key . "` > :" . $valueKey;
+            $returnValue = substr($value, 1);
+        }
+        elseif (strpos($value, '<=') === 0) {
+            $returnWhere = " `" . $key . "` <= :" . $valueKey;
+            $returnValue = substr($value, 2);
+        }
+        elseif (strpos($value, '<') === 0) {
+            $returnWhere = " `" . $key . "` < :" . $valueKey;
+            $returnValue = substr($value, 1);
+        }
+        elseif (strpos($value, '%') !== false) {
+            $returnWhere = " `" . $key . "` LIKE :" . $valueKey;
+            $returnValue = $value;
+        }
+        else {
+            $returnWhere = " `" . $key . "` = :" . $valueKey;
+            $returnValue = $value;
+        }
+
+        return [$returnWhere, $returnValue];
+    }
+
+    protected static function valuesWithPlaceholders(array $values): bool
+    {
+        foreach ($values as $key => $value) {
+            $char = substr($value, 0, 1);
+            if (in_array($char, ['!', '<', '>', '%'])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
